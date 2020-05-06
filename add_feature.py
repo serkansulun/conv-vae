@@ -63,12 +63,14 @@ axes[1].set_title('Decoded')
 axes[1].axis('off')
 
 axes[2].imshow(added_decoded)
-axes[2].set_title('Feature added')
 axes[2].axis('off')
-plt.tight_layout()
 
 if remove:
+    axes[2].set_title('Feature removed')
     outfile = 'out_removed.png'
 else:
+    axes[2].set_title('Feature added')
     outfile = 'out_added.png'
+
+plt.tight_layout()
 plt.savefig('media/' + outfile, dpi=300)
