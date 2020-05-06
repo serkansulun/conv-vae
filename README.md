@@ -8,6 +8,9 @@ Modified to enable additional features:
 (e.g having sunglasses). To run this, you need the entire celebA dataset.
 - add_feature.py : Adds/removes feature to photos. Currently only usable feature is sunglasses.
 
+Note: If you are looking to create sharp and realistic images, then using adversarial training can be helpful.
+State-of-the-art models are CycleGAN and DiscoGAN
+
 
 This is a simple variational autoencoder written in Pytorch and trained using the CelebA dataset.
 
