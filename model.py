@@ -4,6 +4,12 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+if torch.cuda.is_available():
+    device_name = 'cuda'
+else:
+    device_name = 'cpu'
+device = torch.device(device_name)
+
 
 class VAE(nn.Module):
     def __init__(self, input_shape, z_dim):
@@ -45,19 +51,7 @@ class VAE(nn.Module):
             nn.LeakyReLU(),
             nn.Dropout(0.2)
         )
-        # self.decoder_conv = nn.Sequential(
-            # nn.ConvTranspose2d(64, 64, 2, stride=2, padding=0),
-            # nn.BatchNorm2d(64),
-            # nn.LeakyReLU(),
-            # nn.ConvTranspose2d(64, 64, 2, stride=2, padding=0),
-            # nn.BatchNorm2d(64),
-            # nn.LeakyReLU(),
-            # nn.ConvTranspose2d(64, 32, 2, stride=2, padding=0),
-            # nn.BatchNorm2d(32),
-            # nn.LeakyReLU(),
-            # nn.ConvTranspose2d(32, 3, 2, stride=2, padding=0),
-            # nn.Sigmoid()
-        # )
+
         self.decoder_conv = nn.Sequential(
             nn.UpsamplingNearest2d(scale_factor=2),
             nn.ConvTranspose2d(64, 64, 3, stride=1, padding=1),
@@ -77,8 +71,7 @@ class VAE(nn.Module):
         )
 
     def sampling(self, mu, log_var):
-        ## TODO: epsilon should be at the model's device (not CUDA)
-        epsilon = torch.Tensor(np.random.normal(size=(self.z_dim), scale=1.0)).cuda()
+        epsilon = torch.Tensor(np.random.normal(size=(self.z_dim), scale=1.0)).to(device)
         return mu + epsilon * torch.exp(log_var / 2)
 
     def forward_encoder(self, x):
@@ -115,4 +108,4 @@ class VAE(nn.Module):
         mu_p, log_var_p = self.forward_encoder(x)
         x = mu_p
         images_p = self.forward_decoder(x)
-        return images_p
+        return [mu_p, log_var_p, images_p]
